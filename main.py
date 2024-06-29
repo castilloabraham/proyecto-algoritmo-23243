@@ -3,7 +3,12 @@ from funciones import Busqueda_partidos, Comprar_entradas, Entrar_partido, resta
 
 
 def main():
-    carga_API()
+    equipos = []
+    estadios = []
+    restaurates = []
+    productos = []
+    partidos = []
+    carga_API(equipos, estadios, restaurates, productos, partidos)
     print("Bienvenid@ a la Euro 2024")
     
     while True:

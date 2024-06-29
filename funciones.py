@@ -1,3 +1,4 @@
+#importar clases
 from Equipo import Equipo
 from Estadio import Estadio
 from Partido import Partido
@@ -7,8 +8,55 @@ from Producto import Producto
 from Comida import Comida
 from Bebida import Bebida
 
-def carga_API():
-    pass
+#importar paquetes
+import json
+import requests
+
+def carga_API(equipos, estadios, restaurates, productos, partidos):
+    #Api de equipos
+    api = requests.get("https://raw.githubusercontent.com/Algoritmos-y-Programacion/api-proyecto/main/teams.json")
+    data = api.json()
+
+    for equipo in data:
+        nuevo_equipo = Equipo(equipo["id"], equipo["code"], equipo["name"], equipo["group"])
+        equipos.append(nuevo_equipo)
+    
+    #Api de estadios
+    api = requests.get("https://raw.githubusercontent.com/Algoritmos-y-Programacion/api-proyecto/main/stadiums.json")
+    data = api.json()
+
+    for estadio in data:
+        restaurantes_local=[]
+        for restaurante in estadio['restaurants']:
+            productos_local = []
+            for producto in restaurante['products']:
+                nuevo_producto = Producto(producto['name'], producto['quantity'], producto['price'], producto['adicional'], producto['stock'], 0)
+                productos_local.append(nuevo_producto)
+                productos.append(nuevo_producto)
+            nuevo_restaurante = Restaurante(restaurante['name'], productos_local)
+            restaurantes_local.append(nuevo_restaurante)
+            restaurantes.append(nuevo_restaurante)
+            
+        nuevo_estadio = Estadio(estadio['id'], estadio['name'], estadio['city'], estadio['capacity'], restaurantes_local)
+        estadios.append(nuevo_estadio)
+
+    #Api de partidos
+    api = requests.get("https://raw.githubusercontent.com/Algoritmos-y-Programacion/api-proyecto/main/matches.json")
+    data = api.json()
+
+    for partido in data:
+        equipo_home = ""
+        equipo_visita = ""
+        for equipo in equipos:
+            if partido.home.id == equipo.id:
+                equipo_home = equipo
+            if partido.away.id == equipo.id:
+                equipo_visita = equipo
+ 
+        nuevo_partido = Partido(partido.id, partido.number, equipo_home, equipo_visita, partido.date, partido.stadium_id, 0, 0)
+        partidos.append(nuevo_partido)
+
+
 
 #opcion 1 del menu
 def Busqueda_partidos():
